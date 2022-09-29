@@ -1,0 +1,5 @@
+data/*
+data/step/*
+.DS_Store
+.idea/*
+__pycache__/*
