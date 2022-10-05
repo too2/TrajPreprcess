@@ -5,6 +5,7 @@ class TrajPoint:
         self.longitude = longitude
         self.latitude = latitude
         self.time = time
+        self.dist = None
 
 class Traj:
     def __init__(self, plan_no, waybill_no, dri_id):

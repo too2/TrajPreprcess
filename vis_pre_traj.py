@@ -38,6 +38,8 @@ def geo_json_generate(link_wkts, type_style="LineString"):
                     'time': item[2][j],
                     'waybill_no': item[1],
                     'dri_id': item[3],
+                    'plan_no': item[4],
+                    'dist': item[5][j],
                     # 'end_point': item[4],
                 }
             }
@@ -50,9 +52,11 @@ def vis_trajs(traj_df, filename, save_path, mode='Multipoint'):
     for waybill_no, traj in data_list:
         coors = traj[['longitude', 'latitude']].values.tolist()
         time = traj['time'].values.tolist()
+        dist = traj['dist'].values.tolist()
         dri_id = traj['dri_id'].values.tolist()[0]
+        plan_no = traj['plan_no'].values.tolist()[0]
         # end_point = traj['end_point'].values.tolist()[0]
-        traj_list.append([coors, waybill_no, time, dri_id])
+        traj_list.append([coors, waybill_no, time, dri_id, plan_no, dist])
     visfilename_point = f"{filename}_point.json"
     visfilename_line = f"{filename}_line.json"
     if mode == 'Multipoint':
@@ -76,14 +80,15 @@ def plot_traj(filename, save_name, path, dri_id=None):
 
 
 if __name__ == "__main__":
-    filename = 'relong_dist.csv'
-    save_name = 'U000049112'
-    path = './data'
+    filename = 'clean_relong_dist.csv'
+    save_name = 'U000070691'
+    save_path = './data/step_new'
+    path = './data/step_new'
     data = pd.read_csv(os.path.join(path, filename))
     # data['time'] = pd.to_datetime(data['time'], format='%Y-%m-%d %H:%M:%S')
 
     # 是否只选择一条轨迹可视化
-    plot_traj = data[data['dri_id'] == 'U000049112']
+    plot_traj = data[data['plan_no'] == 'U000070691']
     data = plot_traj
 
     # 时间过滤
@@ -91,4 +96,4 @@ if __name__ == "__main__":
     #             data['time'].dt.day.isin(np.arange(1, 4))]
     print(data.columns)
 
-    vis_trajs(data, save_name, mode='Multipoint')
+    vis_trajs(data, save_name, save_path, mode='Multipoint')

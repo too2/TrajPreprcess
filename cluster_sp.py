@@ -45,7 +45,7 @@ def do_DBSCAN_for_staypoints(spobj_list, eps=5, min_sample=5):
 
 if __name__ == '__main__':
     # 对停留点进行聚类
-    sp_data_remove_od = pd.read_csv('./data/extract_sp.csv')
+    sp_data_remove_od = pd.read_csv('./data/step_new/staypoint_all.csv')
     spobj_list = []
     for index, row in sp_data_remove_od.iterrows():
         # 去掉起点10公里范围内，终点3公里范围内的停留点
@@ -60,6 +60,6 @@ if __name__ == '__main__':
         spobj_list.append(StayPoint(plan_no=row['plan_no'], waybill_no=row['waybill_no'], dri_id=row['dri_id'],
                                     cen_lng=row['longitude'], cen_lat=row['latitude'],
                                     start_staytime=row['start_stay'], duration=row['duration']))
-    miniclus, labels = do_DBSCAN_for_staypoints(spobj_list, eps=15, min_sample=2)
-    write2csv(miniclus, labels, './data/cluster_result_stay_point_200m_12min_remove_od_dbscan.csv')
+    miniclus, labels = do_DBSCAN_for_staypoints(spobj_list, eps=30, min_sample=5)
+    write2csv(miniclus, labels, './data/step_new/cluster_result_stay_point_remove_od_dbscan.csv')
 

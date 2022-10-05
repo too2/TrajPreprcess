@@ -6,16 +6,15 @@ import datetime
 pd.set_option('display.max_columns', None)
 
 '''
-cluster_id = 0
 # 给每个簇打上label
-data = pd.read_csv('./data/cluster_result_stay_point_200m_12min_remove_od_dbscan_cluster_id.csv')
-sp_poi = pd.read_csv('./data/step/sp_poi.csv')
+data = pd.read_csv('./data/step_new/cluster_result_stay_point_remove_od_dbscan_cluster_id.csv')
+sp_poi = pd.read_csv('./data/step_new/sp_poi.csv')
 
 data = pd.merge(data, sp_poi, how='left', on='cluster_id')
-data.to_csv('./data/step/dri_sp_poi.csv', index=False)
+data.to_csv('./data/step_new/dri_sp_poi.csv', index=False)
 '''
 
-data = pd.read_csv('./data/step/dri_sp_poi.csv')
+data = pd.read_csv('./data/step_new/dri_sp_poi.csv')
 # 选择一个司机，构造表，历史行程中，每个司机的POI值
 print(len(set(data['dri_id'].values.tolist())))
 print(len(set(data['waybill_no'].values.tolist())))
@@ -90,10 +89,10 @@ for dri_id, value in data.groupby('dri_id'):
 #             space += 1
 # print(space, rest, gas)
 # # 统计司机在不同出发时段（POI类型序列的变化关系）
-poi_U000092644 = data[data['dri_id'] == 'U000092644']
-poi_seq = []
+poi_U000070691 = data[data['dri_id'] == 'U000070691']
 poi_list = defaultdict(int)
-for index, value in poi_U000092644.groupby('waybill_no'):
+for index, value in poi_U000070691.groupby('waybill_no'):
+    poi_seq = []
     for index2, value2 in value.iterrows():
         if value2['汽车服务_加油站_150'] > 0:
             poi_type = 'gas'
@@ -106,4 +105,7 @@ for index, value in poi_U000092644.groupby('waybill_no'):
             poi_type = 'rest_area'
         poi_seq.append(poi_type)
     poi_list['&'.join(poi_seq)] += 1
+    print('&'.join(poi_seq))
 print(poi_list)
+
+

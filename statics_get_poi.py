@@ -77,7 +77,7 @@ print(np.average(avg_sp))
 # print(len(extract_sp))
 
 # 给每个簇打上label
-data = pd.read_csv('./data/cluster_result_stay_point_200m_12min_remove_od_dbscan.csv')
+data = pd.read_csv('./data/step_new/cluster_result_stay_point_remove_od_dbscan.csv')
 print(data.head(1))
 label2id = []
 num_nega = 0
@@ -90,11 +90,11 @@ for index, value in data.iterrows():
 label2id = pd.DataFrame(data=label2id, columns=['cluster_id'])
 data = pd.concat([data, label2id], axis=1)
 
-data.to_csv('./data/cluster_result_stay_point_200m_12min_remove_od_dbscan_cluster_id.csv', index=False)
+data.to_csv('./data/step_new/cluster_result_stay_point_remove_od_dbscan_cluster_id.csv', index=False)
 
 
 # 一共有多少行程中停留点 150
-cluster_sp_data = pd.read_csv('./data/cluster_result_stay_point_200m_12min_remove_od_dbscan_cluster_id.csv')
+cluster_sp_data = pd.read_csv('./data/step_new/cluster_result_stay_point_remove_od_dbscan_cluster_id.csv')
 print(cluster_sp_data.head(1))
 label_1 = cluster_sp_data[cluster_sp_data['label'] == -1]
 label_other = cluster_sp_data[cluster_sp_data['label'] != -1]
@@ -108,12 +108,14 @@ label_all['location_gcj'] = label_all.apply(utils_poi.wgs84togaode_arr, axis=1,
 def get_poi(radius: int, data, keys: list):
     ans = {}
     radius_list = [radius]
-    for center_point in tqdm(data.itertuples()):
+    keys_index = 0
+    for index, center_point in tqdm(data.iterrows()):
+        if index % 1500 == 0 and index != 0:
+            keys_index += 1
         for num in radius_list:
             PoiTypes = ['010100', '050000', '180300']
-            key_index = keys[0]
+            key = keys[keys_index]
             for PoiType in PoiTypes:
-                key = key_index
                 params = {
                     "key": key,
                     "location": [str(round(getattr(center_point, 'location_gcj')[0], 6))+','+\
@@ -124,20 +126,31 @@ def get_poi(radius: int, data, keys: list):
                 }
                 url = 'https://restapi.amap.com/v3/place/around'
                 session = HTMLSession()
-                rq = session.get(url, params=params)
-                result = json.loads(rq.html.html)
-                # 控制时间反爬虫
-                # time.sleep(random.randint(3, 4))
-                total_page = result['count']
-                ans.setdefault(str(PoiType) + '_' + str(num), []).append(total_page)
+                try:
+                    rq = session.get(url, params=params)
+                    result = json.loads(rq.html.html)
+                    # 控制时间反爬虫
+                    # time.sleep(random.randint(3, 4))
+                    total_page = result['count']
+                    ans.setdefault(str(PoiType) + '_' + str(num), []).append(total_page)
+                except:
+                    keys_index += 1
+                    key = keys[keys_index]
+                    rq = session.get(url, params=params)
+                    result = json.loads(rq.html.html)
+                    # 控制时间反爬虫
+                    # time.sleep(random.randint(3, 4))
+                    total_page = result['count']
+                    ans.setdefault(str(PoiType) + '_' + str(num), []).append(total_page)
             cluster_id = str(getattr(center_point, 'cluster_id'))
             ans.setdefault('cluster_id', []).append(cluster_id)
     ans = pd.DataFrame(ans)
     return ans
 
 # 高德接口
-keys = ['64584c960e74016089037d213a11b650']
-data_home = './data/step'
+keys = ['6a4d78871c3aac0f548c0bc2e4784546','db188494399ade7fa94919034ef83e5c',\
+        'e148068c41fecb7585a8c19f6f2cb65e','792bb14354d3624305d64d7f0d2d9c34','64584c960e74016089037d213a11b650']
+data_home = './data/step_new'
 data = label_all[['location_gcj', 'cluster_id']]
 radius = 150
 ans = get_poi(radius, data, keys)
@@ -152,5 +165,5 @@ for r in radius_all:
 
 ans.rename(columns=columns, inplace=True)
 print(ans.head())
-ans.to_csv('./data/step/sp_poi.csv', index=False)
+ans.to_csv('./data/step_new/sp_poi.csv', index=False)
 

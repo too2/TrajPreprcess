@@ -87,9 +87,9 @@ def write2csv(ans, save_path):
 
 if __name__ == '__main__':
     # 用停留距离和停留时间去判断
-    traj_data = pd.read_csv('./data/clean_relong_dist.csv')
+    traj_data = pd.read_csv('./data/step_new/traj_taian.csv')
 
-    traj_data = traj_data[traj_data['plan_no'] == 'DD210108001072']
+    # traj_data = traj_data[traj_data['plan_no'] == 'DD210108001072']
 
     threshold_dist = 200
     threshold_time = 720  # 640
@@ -120,6 +120,6 @@ if __name__ == '__main__':
                 sp = StayPoint(cen_lng=cen_lng, cen_lat=cen_lat, start_staytime=start, duration=duration,
                                waybill_no=waybill_no, plan_no=plan_no, dri_id=dri_id)
                 staypoint_all_vis.append(sp)
-    write2csv(staypoint_all_vis, './data/extract_sp_DD210108001072.csv')
+    write2csv(staypoint_all_vis, './data/step_new/staypoint_all.csv')
 
 
