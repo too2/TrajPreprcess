@@ -21,13 +21,14 @@ def write2csv(ans, labels, save_path):
         lat = sp.cen_lat
         start = sp.start_staytime
         duration = sp.duration
+        dist = sp.dist
         waybill_no = sp.waybill_no
         plan_no = sp.plan_no
         dri_id = sp.dri_id
-        sp_list.append([plan_no, waybill_no, dri_id, lng, lat, start, duration, label])
+        sp_list.append([plan_no, waybill_no, dri_id, lng, lat, start, duration, dist, label])
     sp_df = pd.DataFrame(data=sp_list,
                          columns=['plan_no', 'waybill_no', 'dri_id', 'longitude', 'latitude', 'start_stay',
-                                  'duration', 'label'])
+                                  'duration', 'dist', 'label'])
     try:
         sp_df.to_csv(save_path, index=False)
     except Exception as e:
@@ -45,7 +46,7 @@ def do_DBSCAN_for_staypoints(spobj_list, eps=5, min_sample=5):
 
 if __name__ == '__main__':
     # 对停留点进行聚类
-    sp_data_remove_od = pd.read_csv('./data/step_new/staypoint_all.csv')
+    sp_data_remove_od = pd.read_csv('/Volumes/T7/traj_file/taian/staypoint_all.csv')
     spobj_list = []
     for index, row in sp_data_remove_od.iterrows():
         # 去掉起点10公里范围内，终点3公里范围内的停留点
@@ -59,7 +60,7 @@ if __name__ == '__main__':
             continue
         spobj_list.append(StayPoint(plan_no=row['plan_no'], waybill_no=row['waybill_no'], dri_id=row['dri_id'],
                                     cen_lng=row['longitude'], cen_lat=row['latitude'],
-                                    start_staytime=row['start_stay'], duration=row['duration']))
+                                    start_staytime=row['start_stay'], duration=row['duration'], dist=row['dist']))
     miniclus, labels = do_DBSCAN_for_staypoints(spobj_list, eps=30, min_sample=5)
-    write2csv(miniclus, labels, './data/step_new/cluster_result_stay_point_remove_od_dbscan.csv')
+    write2csv(miniclus, labels, '/Volumes/T7/traj_file/taian/cluster_result_stay_point_remove_od_dbscan.csv')
 

@@ -75,12 +75,14 @@ def write2csv(ans, save_path):
         lat = sp.cen_lat
         start = sp.start_staytime
         duration = sp.duration
+        dist = sp.dist
         waybill_no = sp.waybill_no
         plan_no = sp.plan_no
         dri_id = sp.dri_id
-        sp_list.append([plan_no, waybill_no, dri_id, lng, lat, start, duration])
+        sp_list.append([plan_no, waybill_no, dri_id, lng, lat, start, duration, dist])
     sp_df = pd.DataFrame(data=sp_list,
-                         columns=['plan_no', 'waybill_no', 'dri_id', 'longitude', 'latitude', 'start_stay', 'duration'])
+                         columns=['plan_no', 'waybill_no', 'dri_id', 'longitude', 'latitude',
+                                  'start_stay', 'duration', 'dist'])
     try:
         sp_df.to_csv(save_path, index=False)
     except Exception as e:
