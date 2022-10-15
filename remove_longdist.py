@@ -7,16 +7,17 @@ from tqdm import tqdm
 DIST_THRESHOLD = 1000
 
 # 提取泰安市轨迹数据
-path = '/Volumes/T7/traj_file'
-filename = 'traj_taian.csv'
+path = '/Volumes/T7/traj_file/taian'
+filename = 'traj_flow.csv'
 traj_data = pd.read_csv(os.path.join(path, filename))
 
 # 将司机id赋予轨迹数据
-# 运单匹配
-waybill_data = pd.read_csv(os.path.join(path, 'waybill_data_name.csv'))
+# 运单匹配，轨迹附上调度单、司机ID等信息
+way_path = '/Volumes/T7/traj_file/'
+waybill_data = pd.read_csv(os.path.join(way_path, 'waybill_data_name.csv'))
 
 traj_all = TrajAll()
-for waybill_no, data in traj_data.groupby('waybill_no'):
+for waybill_no, data in tqdm(traj_data.groupby('waybill_no')):
     dri_id = waybill_data[waybill_data['waybill_no'] == waybill_no]['driver_id'].values[0]
     trajectory = Traj(list(data['plan_no'])[0], waybill_no, dri_id)
     traj_all.traj_dict[waybill_no] = trajectory
@@ -51,7 +52,7 @@ for waybill_no, traj_obj in tqdm(traj_all.traj_dict.items()):
                 start_index = index
         else:
             dist_end = utils.haversine_distance(end_point, curr_point)
-            if dist_end < 2000:
+            if dist_end < 1500:
                 end_time = traj_point_obj.time
                 end_index = index
                 tag_end = True
@@ -63,6 +64,7 @@ for waybill_no, traj_obj in tqdm(traj_all.traj_dict.items()):
     else:
         traj_obj.traj_point_list = []
 
+print(len(traj_all.traj_dict.items()))
 
 # 轨迹去噪，清除轨迹中轨迹点间距较大的轨迹
 save_traj = []
@@ -84,7 +86,20 @@ for waybill_no, traj_obj in tqdm(traj_all.traj_dict.items()):
     if not flag:
         save_traj.append(traj_obj)
 
-print(len(save_traj))
+
+# 计算轨迹点距离起点已行驶的距离
+last_point = None
+for waybill_no, traj_obj in tqdm(traj_all.traj_dict.items()):
+    for index, traj_point_obj in enumerate(traj_obj.traj_point_list):
+        if index == 0:
+            curr_point = traj_point_obj
+            last_point = curr_point
+            traj_point_obj.dist = 0
+        else:
+            curr_point = traj_point_obj
+            dist = utils.haversine_distance(curr_point, last_point)
+            curr_point.dist = last_point.dist + dist
+            last_point = curr_point
 
 
 save_data = []
@@ -97,7 +112,11 @@ for traj in tqdm(save_traj):
         longitude = point.longitude
         latitude = point.latitude
         timestamp = point.time
-        save_data.append([plan_no, waybill_no, dri_id, longitude, latitude, timestamp])
+        dist = point.dist
+        save_data.append([plan_no, waybill_no, dri_id, longitude, latitude, timestamp, dist])
 
-df_save = pd.DataFrame(data=save_data, columns=['plan_no', 'waybill_no', 'dri_id', 'longitude', 'latitude', 'time'])
-df_save.to_csv('./data/step_new/traj_taian.csv', index=False)
+df_save = pd.DataFrame(data=save_data, columns=['plan_no', 'waybill_no', 'dri_id', 'longitude',
+                                                'latitude', 'time', 'dist'])
+save_path = '/Volumes/T7/traj_file/taian'
+save_filename = 'new_traj_flow.csv'
+df_save.to_csv(os.path.join(save_path, save_filename), index=False)
