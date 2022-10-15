@@ -1,3 +1,5 @@
+import os.path
+
 import utils
 import datetime
 import pandas as pd
@@ -87,7 +89,9 @@ def write2csv(ans, save_path):
 
 if __name__ == '__main__':
     # 用停留距离和停留时间去判断
-    traj_data = pd.read_csv('./data/step_new/traj_taian.csv')
+    path = '/Volumes/T7/traj_file/taian'
+    filename = 'new_traj_flow.csv'
+    traj_data = pd.read_csv(os.path.join(path, filename))
 
     # traj_data = traj_data[traj_data['plan_no'] == 'DD210108001072']
 
@@ -104,11 +108,13 @@ if __name__ == '__main__':
             lng = row['longitude']
             lat = row['latitude']
             time = datetime.datetime.strptime(row['time'], '%Y-%m-%d %H:%M:%S')
-            traj_list.append(TrajPoint(plan_no, waybill_no, lng, lat, time))
+            dist = row['dist']
+            traj_list.append(TrajPoint(plan_no, waybill_no, lng, lat, time, dist))
         traj_segments = sp_detect.detect(traj_list)
         if len(traj_segments) != 0:
             for traj_segment in traj_segments:
                 duration = traj_segment[-1].time - traj_segment[0].time
+                dist = traj_segment[0].dist
                 start = traj_segment[0].time
                 cen_lng = 0
                 cen_lat = 0
@@ -118,8 +124,10 @@ if __name__ == '__main__':
                 cen_lng /= len(traj_segment)
                 cen_lat /= len(traj_segment)
                 sp = StayPoint(cen_lng=cen_lng, cen_lat=cen_lat, start_staytime=start, duration=duration,
-                               waybill_no=waybill_no, plan_no=plan_no, dri_id=dri_id)
+                               dist=dist, waybill_no=waybill_no, plan_no=plan_no, dri_id=dri_id)
                 staypoint_all_vis.append(sp)
-    write2csv(staypoint_all_vis, './data/step_new/staypoint_all.csv')
+    save_path = '/Volumes/T7/traj_file/taian'
+    save_filename = 'staypoint_all.csv'
+    write2csv(staypoint_all_vis, os.path.join(save_path, save_filename))
 
 

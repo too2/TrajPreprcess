@@ -1,7 +1,4 @@
-import os
 import pandas as pd
-import geopandas as gpd
-import vis_pre_traj
 import utils
 from objclass import TrajPoint, Traj, TrajAll
 from tqdm import tqdm
