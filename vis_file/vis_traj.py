@@ -13,7 +13,7 @@ def visual_result(traj, path, type_style="MultiLineString"):
         .json
     """
     dir_path = os.getcwd()
-    save_path = os.path.join(dir_path, 'data/step_new', path)
+    save_path = os.path.join(dir_path, '../data/step_new', path)
     if os.path.exists(save_path):
         os.remove(save_path)
     with open(save_path, "w") as f:
@@ -36,7 +36,7 @@ def geo_json_generate(link_wkts, type_style="LineString"):
                 # 'truck_no': item[3],
                 'time': item[2],
                 'waybill_no': item[1],
-                # 'dri_id': item[3],
+                'dri_id': item[3],
                 # 'end_point': item[4],
             }
         }
@@ -49,9 +49,9 @@ def vis_trajs(traj_df, filename, mode='Multipoint'):
     for waybill_no, traj in data_list:
         coors = traj[['longitude', 'latitude']].values.tolist()
         time = traj['time'].values.tolist()[0]
-        # dri_id = traj['dri_id'].values.tolist()[0]
+        dri_id = traj['dri_id'].values.tolist()[0]
         # end_point = traj['end_point'].values.tolist()[0]
-        traj_list.append([coors, waybill_no, time])
+        traj_list.append([coors, waybill_no, time, dri_id])
     visfilename_point = f"{filename}_point.json"
     visfilename_line = f"{filename}_line.json"
     if mode == 'Multipoint':
@@ -61,15 +61,14 @@ def vis_trajs(traj_df, filename, mode='Multipoint'):
 
 
 if __name__ == "__main__":
-    filename = 'clean_relong_dist.csv'
-    save_name = 'relong_dist_DD201226000492'
-    path = './data/step_new'
+    filename = 'new_traj_flow.csv'
+    save_name = 'new_traj_flow_line.csv'
+    path = '/Volumes/T7/traj_file/taian'
     data = pd.read_csv(os.path.join(path, filename))
     # data['time'] = pd.to_datetime(data['time'], format='%Y-%m-%d %H:%M:%S')
 
     # 是否只选择一条轨迹可视化
-    plot_traj = data[data['plan_no'] == 'DD201226000492']
-    data = plot_traj
+    data = data[data['dri_id'] == 'U000001351']
 
     # 时间过滤
     # data = data[data['time'].dt.month.isin(np.arange(6, 7)) & data['time'].dt.year.isin([2021]) &

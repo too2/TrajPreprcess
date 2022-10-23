@@ -13,7 +13,7 @@ def visual_result(traj, path, type_style="MultiLineString"):
         .json
     """
     dir_path = os.getcwd()
-    save_path = os.path.join(dir_path, 'data/step_new', path)
+    save_path = os.path.join(dir_path, '../data/step_new', path)
     if os.path.exists(save_path):
         os.remove(save_path)
     with open(save_path, "w") as f:
@@ -63,7 +63,7 @@ def vis_trajs(traj_df, filename, mode='Multipoint'):
 if __name__ == "__main__":
     filename = 'clean_relong_dist.csv'
     save_name = 'relong_dist_DD201226000492'
-    path = './data/step_new'
+    path = '../data/step_new'
     data = pd.read_csv(os.path.join(path, filename))
     # data['time'] = pd.to_datetime(data['time'], format='%Y-%m-%d %H:%M:%S')
 

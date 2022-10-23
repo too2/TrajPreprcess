@@ -82,8 +82,8 @@ def plot_traj(filename, save_name, path, dri_id=None):
 if __name__ == "__main__":
     filename = 'clean_relong_dist.csv'
     save_name = 'U000070691'
-    save_path = './data/step_new'
-    path = './data/step_new'
+    save_path = '../data/step_new'
+    path = '../data/step_new'
     data = pd.read_csv(os.path.join(path, filename))
     # data['time'] = pd.to_datetime(data['time'], format='%Y-%m-%d %H:%M:%S')
 
