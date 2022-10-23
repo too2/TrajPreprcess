@@ -113,7 +113,7 @@ def get_poi(radius: int, data, keys: list):
         if index % 1500 == 0 and index != 0:
             keys_index += 1
         for num in radius_list:
-            PoiTypes = ['010100', '050000', '180300']
+            PoiTypes = ['010100', '050000']  #, '180300'
             key = keys[keys_index]
             for PoiType in PoiTypes:
                 params = {
@@ -154,8 +154,8 @@ data = label_all[['location_gcj', 'cluster_id']]
 radius = 150
 ans = get_poi(radius, data, keys)
 
-PoiTypes = ['010100', '050000', '180300']
-names = ['汽车服务_加油站', '餐饮服务', '道路附属设施_服务区']
+PoiTypes = ['010100', '050000']  #, '180300'
+names = ['汽车服务_加油站', '餐饮服务']  #, '道路附属设施_服务区'
 radius_all = [150]
 columns = {}
 for r in radius_all:
