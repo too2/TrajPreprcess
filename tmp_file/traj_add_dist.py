@@ -21,7 +21,7 @@ new_traj = set(df_new['dri_id'].values)
 traj_select_dri = his_traj[his_traj['dri_id'].isin(new_traj)]
 traj_select_dri.to_csv('./data/step_new/traj_select_dri.csv', index=False)
 '''
-traj_select_dri = pd.read_csv('./data/step_new/traj_select_dri.csv')
+traj_select_dri = pd.read_csv('../data/step_new/traj_select_dri.csv')
 
 traj_all = TrajAll()
 for waybill_no, data in traj_select_dri.groupby('waybill_no'):

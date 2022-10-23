@@ -9,19 +9,21 @@
 
 文件展示：  
 1、轨迹可视化
+
+vis_file
 - vis_traj.py #绘制所有轨迹
-- vis_pre_traj.py #绘制单条轨迹  
+- vis_pre_traj.py #绘制单条轨迹（绘制点）
+- vis_plan_route.py #绘制单条轨迹（绘制线）
+- vis_sp.py #绘制停留点
 
 2、主要预处理文件
-- remove_longdist.py #移除长距离路线
+- remove_longdist.py #移除间隔长距离路线、离起终点较远路线
 - extract_staypoint.py #提取停留点
 - cluster_sp.py #对停留点进行聚类
 - statics_get_poi.py #统计停留点所属的POI类别
-- statics_driver_behavior.py #加上了每个轨迹点到起始点的距离
-- statics_dir.py   
-  - 统计每次行程中停留点个数
-  - 统计司机在不同出发时段（POI类型序列的变化关系、停留时长）
-- statics_tmp.py #暂时不用
+- statics_merge_poi.py #合并距离相近，时间相近的停留点
+- statics_poi_seq.py #分析停留点序列间关联
+- map_matching_tptk.py #利用HMM进行地图匹配
 
 3、辅助文件
 - utils.py
@@ -29,4 +31,4 @@
 - objclass.py
 
 4、暂时不用的文件
-- read_tag_file.py
+- tmp_file
